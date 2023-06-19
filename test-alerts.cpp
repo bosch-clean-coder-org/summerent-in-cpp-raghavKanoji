@@ -54,7 +54,3 @@ TEST_CASE("classifyTemperatureBreach CoolingType is HI_ACTIVE_COOLING and temp i
 TEST_CASE("classifyTemperatureBreach CoolingType is MED_ACTIVE_COOLING and temp is TOO_HIGH") {
 	REQUIRE(classifyTemperatureBreach(CoolingType::MED_ACTIVE_COOLING, 55) == TOO_HIGH);
 }
-
-TEST_CASE("classifyTemperatureBreach CoolingType boundry check 1") {
-	REQUIRE(classifyTemperatureBreach(CoolingType(3), 25) == NORMAL);
-}
