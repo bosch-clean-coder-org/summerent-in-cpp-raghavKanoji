@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 
 typedef enum {
   PASSIVE_COOLING,
@@ -29,4 +30,4 @@ void checkAndAlert(
   AlertTarget alertTarget, BatteryCharacter batteryChar, double temperatureInC);
 
 void sendToController(BreachType breachType);
-void sendToEmail(BreachType breachType);
+void sendToEmail(std::string str);
