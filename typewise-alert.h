@@ -1,25 +1,25 @@
 #pragma once
 #include <string>
 
-typedef enum {
+enum class CoolingType {
   PASSIVE_COOLING,
   HI_ACTIVE_COOLING,
   MED_ACTIVE_COOLING
-} CoolingType;
+};
 
-typedef enum {
+ enum class BreachType{
   NORMAL,
   TOO_LOW,
   TOO_HIGH
-} BreachType;
+} ;
 
 BreachType inferBreach(double value, double upperLimit);
 BreachType classifyTemperatureBreach(CoolingType coolingType, double temperatureInC);
 
-typedef enum {
+enum class AlertTarget {
   TO_CONTROLLER,
   TO_EMAIL
-} AlertTarget;
+} ;
 
 typedef struct {
   CoolingType coolingType;
