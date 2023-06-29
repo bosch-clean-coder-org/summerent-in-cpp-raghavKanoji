@@ -1,35 +1,28 @@
 #include "typewise-alert.h"
 #include <stdio.h>
+#include <map>
+#include <string>
 
-BreachType inferBreach(double value, double lowerLimit, double upperLimit) {
-  if(value < lowerLimit) {
-    return TOO_LOW;
+BreachType inferBreach(double value, double upperLimit) {
+  BreachType returnVal = BreachType::NORMAL;
+  if(value < 0) {
+      returnVal = BreachType::TOO_LOW;
   }
-  if(value > upperLimit) {
-    return TOO_HIGH;
+  else if(value > upperLimit) {
+      returnVal = BreachType::TOO_HIGH;
   }
-  return NORMAL;
+  return returnVal;
 }
 
 BreachType classifyTemperatureBreach(
     CoolingType coolingType, double temperatureInC) {
-  int lowerLimit = 0;
   int upperLimit = 0;
-  switch(coolingType) {
-    case PASSIVE_COOLING:
-      lowerLimit = 0;
-      upperLimit = 35;
-      break;
-    case HI_ACTIVE_COOLING:
-      lowerLimit = 0;
-      upperLimit = 45;
-      break;
-    case MED_ACTIVE_COOLING:
-      lowerLimit = 0;
-      upperLimit = 40;
-      break;
-  }
-  return inferBreach(temperatureInC, lowerLimit, upperLimit);
+  std::map<CoolingType, int> coolingTypemap;
+  coolingTypemap[CoolingType::PASSIVE_COOLING] = 35;
+  coolingTypemap[CoolingType::HI_ACTIVE_COOLING] = 45;
+  coolingTypemap[CoolingType::MED_ACTIVE_COOLING] = 40;
+  
+  return inferBreach(temperatureInC, coolingTypemap[coolingType]);
 }
 
 void checkAndAlert(
@@ -39,13 +32,18 @@ void checkAndAlert(
     batteryChar.coolingType, temperatureInC
   );
 
-  switch(alertTarget) {
-    case TO_CONTROLLER:
+  std::map<BreachType, std::string> breachTypemap;
+  breachTypemap[BreachType::NORMAL] = " \n";
+  breachTypemap[BreachType::TOO_LOW] = "Hi, the temperature is too low\n ";
+  breachTypemap[BreachType::TOO_HIGH] = "Hi, the temperature is too high\n ";
+
+  if (alertTarget == AlertTarget::TO_EMAIL)
+  {
+      sendToEmail(breachTypemap[breachType]);
+  }
+  else if (alertTarget == AlertTarget::TO_CONTROLLER)
+  {
       sendToController(breachType);
-      break;
-    case TO_EMAIL:
-      sendToEmail(breachType);
-      break;
   }
 }
 
@@ -54,18 +52,8 @@ void sendToController(BreachType breachType) {
   printf("%x : %x\n", header, breachType);
 }
 
-void sendToEmail(BreachType breachType) {
+void sendToEmail(std::string str) {
   const char* recepient = "a.b@c.com";
-  switch(breachType) {
-    case TOO_LOW:
-      printf("To: %s\n", recepient);
-      printf("Hi, the temperature is too low\n");
-      break;
-    case TOO_HIGH:
-      printf("To: %s\n", recepient);
-      printf("Hi, the temperature is too high\n");
-      break;
-    case NORMAL:
-      break;
-  }
+  printf("To: %s\n", recepient);
+  printf(" %s ", str.c_str());
 }
